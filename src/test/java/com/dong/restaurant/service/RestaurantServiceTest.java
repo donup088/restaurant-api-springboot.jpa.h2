@@ -11,7 +11,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Optional.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,45 +31,63 @@ class RestaurantServiceTest {
     private MenuItemRepository menuItemRepository;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
-        restaurantService=new RestaurantService(restaurantRepository,menuItemRepository);
+        restaurantService = new RestaurantService(restaurantRepository, menuItemRepository);
 
-        List<Restaurant> restaurants=new ArrayList<>();
-        restaurants.add(new Restaurant(11L,"밥집","서울"));
+        List<Restaurant> restaurants = new ArrayList<>();
+        restaurants.add(Restaurant.builder()
+                .id(11L)
+                .name("밥집")
+                .address("서울")
+                .build());
 
-        MenuItem menuItem=new MenuItem("떡볶이");
-        Restaurant restaurant=new Restaurant(1L,"분식집","서울");
-        restaurant.addMenuItem(menuItem);
+        List<MenuItem> menuItems = Arrays.asList(MenuItem.builder().name("떡볶이").build());
+        Restaurant restaurant = Restaurant.builder().id(1L).name("분식집").address("서울").menuItems(menuItems).build();
+        restaurant.addMenuItem(menuItems);
 
         given(restaurantRepository.findAll()).willReturn(restaurants);
         given(restaurantRepository.findById(1L)).willReturn(of(restaurant));
+        given(menuItemRepository.findAllByRestaurantId(1L)).willReturn(menuItems);
     }
 
     @Test
-    public void getRestaurant(){
+    public void getRestaurant() {
         Restaurant restaurant = restaurantService.getRestaurant(1L);
+        System.out.println("restaurant = " + restaurant);
+        System.out.println("restaurant.getMenuItems() = " + restaurant.getMenuItems());
         MenuItem menuItem = restaurant.getMenuItems().get(0);
-        assertEquals(restaurant.getId(),1L);
-        assertEquals(menuItem.getName(),"떡볶이");
+        assertEquals(restaurant.getId(), 1L);
+        assertEquals(menuItem.getName(), "떡볶이");
     }
 
     @Test
-    public void getRestaurants(){
+    public void getRestaurants() {
         List<Restaurant> restaurants = restaurantService.getRestaurants();
         Restaurant restaurant = restaurants.get(0);
-        assertEquals(restaurant.getId(),11L);
+        assertEquals(restaurant.getId(), 11L);
     }
 
     @Test
-    public void addRestaurant(){
-        Restaurant restaurant = new Restaurant("분식집", "서울");
-        Restaurant saveRestaurant=new Restaurant(123L,"분식집","서울");
+    public void addRestaurant() {
+        Restaurant restaurant = Restaurant.builder().name("분식집").address("서울").build();
+        Restaurant saveRestaurant = Restaurant.builder().id(123L).name("분식집").address("서울").build();
 
         given(restaurantRepository.save(any())).willReturn(saveRestaurant);
 
-        Restaurant newRestaurant=restaurantService.addRestaurant(restaurant);
+        Restaurant newRestaurant = restaurantService.addRestaurant(restaurant);
 
-        assertEquals(newRestaurant.getId(),123L);
+        assertEquals(newRestaurant.getId(), 123L);
+    }
+
+    @Test
+    public void updateRestaurant() {
+        Restaurant restaurant = Restaurant.builder().id(123L).name("밥집").address("서울").build();
+        given(restaurantRepository.findById(123L)).willReturn(Optional.of(restaurant));
+
+        restaurantService.updateRestaurant(123L, "고기집", "강릉");
+
+        assertEquals(restaurant.getName(), "고기집");
+        assertEquals(restaurant.getAddress(), "강릉");
     }
 }

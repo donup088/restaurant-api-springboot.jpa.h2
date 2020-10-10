@@ -12,14 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -35,7 +35,12 @@ class RestaurantControllerTest {
     @Test
     public void 전체조회() throws Exception {
         List<Restaurant> restaurants = new ArrayList<>();
-        restaurants.add(new Restaurant(11L, "밥집", "서울"));
+        restaurants.add(
+                Restaurant.builder()
+                        .id(11L)
+                        .name("밥집")
+                        .address("서울")
+                        .build());
         given(restaurantService.getRestaurants()).willReturn(restaurants);
 
         mvc.perform(get("/restaurant"))
@@ -46,9 +51,18 @@ class RestaurantControllerTest {
 
     @Test
     public void 단건조회() throws Exception {
-        Restaurant restaurant1 = new Restaurant(123L, "밥집", "서울");
-        restaurant1.addMenuItem(new MenuItem("밥"));
-        Restaurant restaurant2 = new Restaurant(100L, "한식집", "서울");
+        Restaurant restaurant1 = Restaurant.builder()
+                .id(123L)
+                .name("밥집")
+                .address("서울")
+                .build();
+        restaurant1.addMenuItem(Arrays.asList(MenuItem.builder().name("보리밥").build()));
+
+        Restaurant restaurant2 = Restaurant.builder()
+                .id(100L)
+                .name("한식집")
+                .address("서울")
+                .build();
         given(restaurantService.getRestaurant(123L)).willReturn(restaurant1);
         given(restaurantService.getRestaurant(100L)).willReturn(restaurant2);
 
@@ -56,7 +70,7 @@ class RestaurantControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("\"id\":123")))
                 .andExpect(content().string(containsString("\"name\":\"밥집\"")))
-                .andExpect(content().string(containsString("밥")));
+                .andExpect(content().string(containsString("보리밥")));
 
         mvc.perform(get("/restaurant/100"))
                 .andExpect(status().isOk())
@@ -67,9 +81,13 @@ class RestaurantControllerTest {
     @Test
     public void 레스토랑생성() throws Exception {
         given(restaurantService.addRestaurant(any())).will(invocation -> {
-            Restaurant restaurant=invocation.getArgument(0);
+            Restaurant restaurant = invocation.getArgument(0);
 
-            return new Restaurant(1L,restaurant.getName(),restaurant.getAddress());
+            return Restaurant.builder()
+                    .id(1L)
+                    .name(restaurant.getName())
+                    .address(restaurant.getAddress())
+                    .build();
         });
 
         mvc.perform(post("/restaurant")
@@ -80,5 +98,15 @@ class RestaurantControllerTest {
                 .andExpect(content().string("{}"));
 
         verify(restaurantService).addRestaurant(any());
+    }
+
+    @Test
+    public void 레스토랑수정() throws Exception {
+        mvc.perform(patch("/restaurant/123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"양식집\",\"address\":\"부산\"}"))
+                .andExpect(status().isOk());
+
+        verify(restaurantService).updateRestaurant(123L, "양식집", "부산");
     }
 }

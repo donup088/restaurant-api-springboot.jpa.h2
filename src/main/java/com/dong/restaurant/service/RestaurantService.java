@@ -25,7 +25,7 @@ public class RestaurantService {
     public Restaurant getRestaurant(Long id){
         Restaurant restaurant=restaurantRepository.findById(id).orElse(null);
         List<MenuItem> menuItems = menuItemRepository.findAllByRestaurantId(id);
-        restaurant.setMenuItem(menuItems);
+        restaurant.addMenuItem(menuItems);
 
         return restaurant;
     }
@@ -35,8 +35,13 @@ public class RestaurantService {
     }
 
     public Restaurant addRestaurant(Restaurant restaurant) {
-        System.out.println("=========================");
-        System.out.println("restaurant = " + restaurant);
         return restaurantRepository.save(restaurant);
+    }
+
+    public Restaurant updateRestaurant(Long id, String name, String address) {
+        Restaurant restaurant = restaurantRepository.findById(id).get();
+        restaurant.updateInformation(name,address);
+
+        return restaurant;
     }
 }
