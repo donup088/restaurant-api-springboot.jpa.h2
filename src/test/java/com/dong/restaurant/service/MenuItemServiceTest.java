@@ -50,11 +50,15 @@ class MenuItemServiceTest {
         given(restaurantRepository.findById(1L)).willReturn(Optional.ofNullable(restaurant));
 
         List<MenuItem> menuItems = new ArrayList<>();
-        menuItems.add(MenuItem.builder().id(1L).name("고기").build());
-        menuItems.add(MenuItem.builder().id(2L).name("국").build());
-
+        menuItems.add(MenuItem.builder().name("고기").build());
+        menuItems.add(MenuItem.builder().id(13L).name("국").build());
+        menuItems.add(MenuItem.builder().id(123L).destroy(true).build());
         menuItemService.bulkUpdate(1L, menuItems);
 
         verify(menuItemRepository, times(2)).save(any());
+        verify(menuItemRepository, times(1)).deleteById(123L);
+
     }
+
+
 }
