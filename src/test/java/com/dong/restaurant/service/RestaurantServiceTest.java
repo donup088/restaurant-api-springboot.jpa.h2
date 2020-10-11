@@ -5,6 +5,7 @@ import com.dong.restaurant.domain.Restaurant;
 import com.dong.restaurant.exception.RestaurantNotFoundException;
 import com.dong.restaurant.repsoitory.MenuItemRepository;
 import com.dong.restaurant.repsoitory.RestaurantRepository;
+import com.dong.restaurant.repsoitory.ReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class RestaurantServiceTest {
@@ -32,10 +34,13 @@ class RestaurantServiceTest {
     @Mock
     private MenuItemRepository menuItemRepository;
 
+    @Mock
+    private ReviewRepository reviewRepository;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        restaurantService = new RestaurantService(restaurantRepository, menuItemRepository);
+        restaurantService = new RestaurantService(restaurantRepository, menuItemRepository,reviewRepository);
 
         List<Restaurant> restaurants = new ArrayList<>();
         restaurants.add(Restaurant.builder()
@@ -56,9 +61,9 @@ class RestaurantServiceTest {
     @Test
     public void getRestaurant() {
         Restaurant restaurant = restaurantService.getRestaurant(1L);
-        System.out.println("restaurant = " + restaurant);
-        System.out.println("restaurant.getMenuItems() = " + restaurant.getMenuItems());
         MenuItem menuItem = restaurant.getMenuItems().get(0);
+        verify(menuItemRepository).findAllByRestaurantId(1L);
+        verify(reviewRepository).findAllByRestaurantId(1L);
         assertEquals(restaurant.getId(), 1L);
         assertEquals(menuItem.getName(), "떡볶이");
     }

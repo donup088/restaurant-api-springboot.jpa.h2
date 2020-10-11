@@ -2,6 +2,7 @@ package com.dong.restaurant.controller;
 
 import com.dong.restaurant.domain.MenuItem;
 import com.dong.restaurant.domain.Restaurant;
+import com.dong.restaurant.domain.Review;
 import com.dong.restaurant.exception.RestaurantNotFoundException;
 import com.dong.restaurant.service.RestaurantService;
 import org.junit.jupiter.api.Test;
@@ -52,31 +53,29 @@ class RestaurantControllerTest {
 
     @Test
     public void 단건조회성공() throws Exception {
-        Restaurant restaurant1 = Restaurant.builder()
+        Restaurant restaurant = Restaurant.builder()
                 .id(123L)
                 .name("밥집")
                 .address("서울")
                 .build();
-        restaurant1.addMenuItem(Arrays.asList(MenuItem.builder().name("보리밥").build()));
-
-        Restaurant restaurant2 = Restaurant.builder()
-                .id(100L)
-                .name("한식집")
-                .address("서울")
+        Review review = Review.builder()
+                .name("dong")
+                .score(5)
+                .description("good")
                 .build();
-        given(restaurantService.getRestaurant(123L)).willReturn(restaurant1);
-        given(restaurantService.getRestaurant(100L)).willReturn(restaurant2);
+
+        restaurant.addReview(Arrays.asList(review));
+        restaurant.addMenuItem(Arrays.asList(MenuItem.builder().name("보리밥").build()));
+
+        given(restaurantService.getRestaurant(123L)).willReturn(restaurant);
 
         mvc.perform(get("/restaurant/123"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("\"id\":123")))
                 .andExpect(content().string(containsString("\"name\":\"밥집\"")))
-                .andExpect(content().string(containsString("보리밥")));
+                .andExpect(content().string(containsString("보리밥")))
+                .andExpect(content().string(containsString("good")));
 
-        mvc.perform(get("/restaurant/100"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("\"id\":100")))
-                .andExpect(content().string(containsString("\"name\":\"한식집\"")));
     }
 
     @Test

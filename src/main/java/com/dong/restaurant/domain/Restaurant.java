@@ -33,18 +33,24 @@ public class Restaurant {
     private List<MenuItem> menuItems=new ArrayList<>();
 
     @OneToMany(mappedBy = "restaurant")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Review> reviews=new ArrayList<>();
 
     public String getInformation() {
         return name + " in " + address;
     }
 
-    public void addMenuItem(List<MenuItem> menuItems) {
-       this.menuItems=new ArrayList<>(menuItems);
-    }
 
     public void updateInformation(String name, String address) {
         this.name=name;
         this.address=address;
+    }
+
+    public void addMenuItem(List<MenuItem> menuItems) {
+       this.menuItems=new ArrayList<>(menuItems);
+    }
+
+    public void addReview(List<Review> reviews) {
+        this.reviews=new ArrayList<>(reviews);
     }
 }
