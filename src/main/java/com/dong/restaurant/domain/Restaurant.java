@@ -1,5 +1,6 @@
 package com.dong.restaurant.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,7 +29,8 @@ public class Restaurant {
     private String address;
 
     @OneToMany(mappedBy = "restaurant")
-    private List<MenuItem> menuItems;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<MenuItem> menuItems=new ArrayList<>();
 
     public String getInformation() {
         return name + " in " + address;
