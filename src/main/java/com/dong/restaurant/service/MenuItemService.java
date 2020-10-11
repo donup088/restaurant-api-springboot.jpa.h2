@@ -28,7 +28,7 @@ public class MenuItemService {
     }
 
     private void update(Restaurant restaurant, MenuItem menuItem) {
-        if(menuItem.isDestroy()){
+        if(menuItem.isDestroy()){//destroy가 true일 경우
             menuItemRepository.deleteById(menuItem.getId());
             return;
         }

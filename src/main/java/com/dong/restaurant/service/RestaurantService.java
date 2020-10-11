@@ -26,6 +26,7 @@ public class RestaurantService {
     public Restaurant getRestaurant(Long id) {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException(id));
+
         List<MenuItem> menuItems = menuItemRepository.findAllByRestaurantId(id);
         restaurant.addMenuItem(menuItems);
 

@@ -1,0 +1,28 @@
+package com.dong.restaurant.service;
+
+import com.dong.restaurant.domain.Restaurant;
+import com.dong.restaurant.domain.Review;
+import com.dong.restaurant.repsoitory.RestaurantRepository;
+import com.dong.restaurant.repsoitory.ReviewRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ReviewService {
+
+    private ReviewRepository reviewRepository;
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    public ReviewService(ReviewRepository reviewRepository,RestaurantRepository restaurantRepository) {
+        this.reviewRepository = reviewRepository;
+        this.restaurantRepository=restaurantRepository;
+    }
+
+    public Review addReview(Long restaurantId, Review review) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).get();
+        review.setRestaurant(restaurant);
+
+        return reviewRepository.save(review);
+    }
+}

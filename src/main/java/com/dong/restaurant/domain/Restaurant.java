@@ -32,6 +32,9 @@ public class Restaurant {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<MenuItem> menuItems=new ArrayList<>();
 
+    @OneToMany(mappedBy = "restaurant")
+    private List<Review> reviews=new ArrayList<>();
+
     public String getInformation() {
         return name + " in " + address;
     }
