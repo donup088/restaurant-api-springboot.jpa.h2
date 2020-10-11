@@ -2,6 +2,7 @@ package com.dong.restaurant.service;
 
 import com.dong.restaurant.domain.MenuItem;
 import com.dong.restaurant.domain.Restaurant;
+import com.dong.restaurant.exception.RestaurantNotFoundException;
 import com.dong.restaurant.repsoitory.MenuItemRepository;
 import com.dong.restaurant.repsoitory.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,9 @@ public class RestaurantService {
         this.menuItemRepository = menuItemRepository;
     }
 
-    public Restaurant getRestaurant(Long id){
-        Restaurant restaurant=restaurantRepository.findById(id).orElse(null);
+    public Restaurant getRestaurant(Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new RestaurantNotFoundException(id));
         List<MenuItem> menuItems = menuItemRepository.findAllByRestaurantId(id);
         restaurant.addMenuItem(menuItems);
 
@@ -40,7 +42,7 @@ public class RestaurantService {
 
     public Restaurant updateRestaurant(Long id, String name, String address) {
         Restaurant restaurant = restaurantRepository.findById(id).get();
-        restaurant.updateInformation(name,address);
+        restaurant.updateInformation(name, address);
 
         return restaurant;
     }

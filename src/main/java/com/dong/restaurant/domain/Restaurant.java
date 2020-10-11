@@ -3,6 +3,7 @@ package com.dong.restaurant.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +20,11 @@ public class Restaurant {
     private Long id;
 
     @Column(name = "restaurant_name")
+    @NotEmpty
     private String name;
 
     @Column(name = "restaurant_address")
+    @NotEmpty
     private String address;
 
     @OneToMany(mappedBy = "restaurant")

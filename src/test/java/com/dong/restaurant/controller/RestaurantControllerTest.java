@@ -2,6 +2,7 @@ package com.dong.restaurant.controller;
 
 import com.dong.restaurant.domain.MenuItem;
 import com.dong.restaurant.domain.Restaurant;
+import com.dong.restaurant.exception.RestaurantNotFoundException;
 import com.dong.restaurant.service.RestaurantService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -50,7 +52,7 @@ class RestaurantControllerTest {
     }
 
     @Test
-    public void 단건조회() throws Exception {
+    public void 단건조회성공() throws Exception {
         Restaurant restaurant1 = Restaurant.builder()
                 .id(123L)
                 .name("밥집")
@@ -79,6 +81,16 @@ class RestaurantControllerTest {
     }
 
     @Test
+    public void 단건조회실패() throws Exception {
+        given(restaurantService.getRestaurant(222L))
+                .willThrow(new RestaurantNotFoundException(222L));
+
+        mvc.perform(get("/restaurant/222"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("{}"));
+    }
+
+    @Test
     public void 레스토랑생성() throws Exception {
         given(restaurantService.addRestaurant(any())).will(invocation -> {
             Restaurant restaurant = invocation.getArgument(0);
@@ -101,6 +113,15 @@ class RestaurantControllerTest {
     }
 
     @Test
+    public void 레스토랑생성에러처리() throws Exception {
+        mvc.perform(post("/restaurant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     public void 레스토랑수정() throws Exception {
         mvc.perform(patch("/restaurant/123")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,5 +129,13 @@ class RestaurantControllerTest {
                 .andExpect(status().isOk());
 
         verify(restaurantService).updateRestaurant(123L, "양식집", "부산");
+    }
+
+    @Test
+    public void 레스토랑수정에러처리() throws Exception {
+        mvc.perform(patch("/restaurant/123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
     }
 }

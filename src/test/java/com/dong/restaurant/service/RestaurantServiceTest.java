@@ -2,6 +2,7 @@ package com.dong.restaurant.service;
 
 import com.dong.restaurant.domain.MenuItem;
 import com.dong.restaurant.domain.Restaurant;
+import com.dong.restaurant.exception.RestaurantNotFoundException;
 import com.dong.restaurant.repsoitory.MenuItemRepository;
 import com.dong.restaurant.repsoitory.RestaurantRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 import static java.util.Optional.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -60,6 +62,13 @@ class RestaurantServiceTest {
         assertEquals(restaurant.getId(), 1L);
         assertEquals(menuItem.getName(), "떡볶이");
     }
+
+    @Test
+    public void getRestaurantNotExisted() {
+        assertThrows(RestaurantNotFoundException.class,
+                () -> restaurantService.getRestaurant(222L));
+    }
+
 
     @Test
     public void getRestaurants() {
