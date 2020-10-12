@@ -43,5 +43,4 @@ public class RestaurantService {
     public List<Restaurant> getRestaurants() {
         return restaurantRepository.findAll();
     }
-
 }

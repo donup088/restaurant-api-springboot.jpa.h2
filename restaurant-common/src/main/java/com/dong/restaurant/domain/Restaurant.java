@@ -40,7 +40,6 @@ public class Restaurant {
         return name + " in " + address;
     }
 
-
     public void updateInformation(String name, String address) {
         this.name = name;
         this.address = address;
