@@ -32,6 +32,9 @@ public class User {
     @NotNull
     private Integer level;
 
+    @NotEmpty
+    private String password;
+
     public Boolean isAdmin() {
         return level >= 100;
     }
