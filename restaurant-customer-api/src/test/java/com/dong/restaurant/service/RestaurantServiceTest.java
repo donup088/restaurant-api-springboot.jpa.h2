@@ -1,5 +1,6 @@
 package com.dong.restaurant.service;
 
+import com.dong.restaurant.domain.Category;
 import com.dong.restaurant.domain.MenuItem;
 import com.dong.restaurant.domain.Restaurant;
 import com.dong.restaurant.exception.RestaurantNotFoundException;
@@ -39,10 +40,11 @@ class RestaurantServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         restaurantService = new RestaurantService(restaurantRepository, menuItemRepository,reviewRepository);
-
+        Category category=Category.builder().id(1L).build();
         List<Restaurant> restaurants = new ArrayList<>();
         restaurants.add(Restaurant.builder()
                 .id(11L)
+                .category(category)
                 .name("밥집")
                 .address("서울")
                 .build());
@@ -51,7 +53,7 @@ class RestaurantServiceTest {
         Restaurant restaurant = Restaurant.builder().id(1L).name("분식집").address("서울").menuItems(menuItems).build();
         restaurant.addMenuItem(menuItems);
 
-        given(restaurantRepository.findAllByAddressContaining("Seoul")).willReturn(restaurants);
+        given(restaurantRepository.findAllByAddressContainingAndCategoryId("Seoul",1L)).willReturn(restaurants);
         given(restaurantRepository.findById(1L)).willReturn(of(restaurant));
         given(menuItemRepository.findAllByRestaurantId(1L)).willReturn(menuItems);
     }
@@ -75,7 +77,7 @@ class RestaurantServiceTest {
 
     @Test
     public void getRestaurants() {
-        List<Restaurant> restaurants = restaurantService.getRestaurants("Seoul");
+        List<Restaurant> restaurants = restaurantService.getRestaurants("Seoul", 1L);
 
         Restaurant restaurant = restaurants.get(0);
 

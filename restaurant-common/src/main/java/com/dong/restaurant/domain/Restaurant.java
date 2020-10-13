@@ -36,6 +36,10 @@ public class Restaurant {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Review> reviews;
 
+    @ManyToOne
+    @JoinColumn(name ="category_id")
+    private Category category;
+
     public String getInformation() {
         return name + " in " + address;
     }

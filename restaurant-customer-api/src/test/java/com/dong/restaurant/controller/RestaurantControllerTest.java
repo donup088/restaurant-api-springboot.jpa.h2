@@ -1,5 +1,6 @@
 package com.dong.restaurant.controller;
 
+import com.dong.restaurant.domain.Category;
 import com.dong.restaurant.domain.MenuItem;
 import com.dong.restaurant.domain.Restaurant;
 import com.dong.restaurant.domain.Review;
@@ -35,15 +36,17 @@ class RestaurantControllerTest {
     @Test
     public void 전체조회() throws Exception {
         List<Restaurant> restaurants = new ArrayList<>();
+        Category category=Category.builder().id(1L).build();
         restaurants.add(
                 Restaurant.builder()
                         .id(11L)
+                        .category(category)
                         .name("밥집")
                         .address("서울")
                         .build());
-        given(restaurantService.getRestaurants("Seoul")).willReturn(restaurants);
+        given(restaurantService.getRestaurants("Seoul",1L)).willReturn(restaurants);
 
-        mvc.perform(get("/restaurant?region=Seoul"))
+        mvc.perform(get("/restaurant?region=Seoul&category=1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("\"id\":11")))
                 .andExpect(content().string(containsString("\"name\":\"밥집\"")));
