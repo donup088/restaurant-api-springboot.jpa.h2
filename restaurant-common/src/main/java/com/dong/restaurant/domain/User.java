@@ -41,4 +41,12 @@ public class User {
         this.name = name;
         this.level = level;
     }
+
+    public boolean isActive() {
+        return level > 0;
+    }
+
+    public void deactivate() {
+        this.level = 0;
+    }
 }

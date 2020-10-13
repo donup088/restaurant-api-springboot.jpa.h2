@@ -76,4 +76,22 @@ class UserServiceTest {
         assertEquals(updateUser.getName(),"123");
         assertEquals(user.isAdmin(),true);
     }
+
+    @Test
+    public void deactiveUser(){
+        Long id=1L;
+        String email="test@test.com";
+        String name="admin";
+        Integer level=100;
+        User user=User.builder().id(id).email(email).name(name).level(level).build();
+
+        given(userRepository.findById(1L)).willReturn(Optional.ofNullable(user));
+
+        User deactiveUser = userService.deactiveUser(1L);
+
+        verify(userRepository).findById(1L);
+
+        assertEquals(deactiveUser.isAdmin(),false);
+        assertEquals(deactiveUser.isActive(),false);
+    }
 }

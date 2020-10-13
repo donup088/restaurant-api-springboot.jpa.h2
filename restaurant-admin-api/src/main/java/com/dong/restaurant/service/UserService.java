@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public User addUser(String email, String name) {
-        User user=User.builder().name(name).email(email).build();
+        User user=User.builder().name(name).email(email).level(1).build();
 
         return userRepository.save(user);
     }
@@ -33,6 +33,13 @@ public class UserService {
     public User updateUser(Long id, String email, String name, Integer level) {
         User user = userRepository.findById(id).get();
         user.updateUser(email,name,level);
+
+        return user;
+    }
+
+    public User deactiveUser(Long id) {
+        User user = userRepository.findById(id).get();
+        user.deactivate();
 
         return user;
     }
