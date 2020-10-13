@@ -51,7 +51,7 @@ class RestaurantServiceTest {
         Restaurant restaurant = Restaurant.builder().id(1L).name("분식집").address("서울").menuItems(menuItems).build();
         restaurant.addMenuItem(menuItems);
 
-        given(restaurantRepository.findAll()).willReturn(restaurants);
+        given(restaurantRepository.findAllByAddressContaining("Seoul")).willReturn(restaurants);
         given(restaurantRepository.findById(1L)).willReturn(of(restaurant));
         given(menuItemRepository.findAllByRestaurantId(1L)).willReturn(menuItems);
     }
@@ -75,8 +75,10 @@ class RestaurantServiceTest {
 
     @Test
     public void getRestaurants() {
-        List<Restaurant> restaurants = restaurantService.getRestaurants();
+        List<Restaurant> restaurants = restaurantService.getRestaurants("Seoul");
+
         Restaurant restaurant = restaurants.get(0);
+
         assertEquals(restaurant.getId(), 11L);
     }
 }
