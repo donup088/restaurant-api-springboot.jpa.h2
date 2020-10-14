@@ -28,16 +28,18 @@ class ReviewControllerTest {
 
     @Test
     public void 리뷰생성() throws Exception {
-        given(reviewService.addReview(any(),any())).willReturn(
-                Review.builder().id(12L).build()
-        );
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb25nIn0.nFJeevg5yaVow0gINVZY-CJ7Zw6PHNhUqXHMzWsFX6c";
 
-        mvc.perform(post("/restaurant/1/review")
+        given(reviewService.addReview(12L, "dong", "맛있다.", 3))
+                .willReturn(Review.builder().id(12L).build());
+
+        mvc.perform(post("/restaurant/12/review")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"dong\",\"score\":3,\"description\":\"맛있다.\"}"))
+                .content("{\"score\":3,\"description\":\"맛있다.\"}"))
                 .andExpect(status().isCreated());
 
-        verify(reviewService).addReview(any(),any());
+        verify(reviewService).addReview(12L, "dong", "맛있다.", 3);
     }
 
     @Test
@@ -47,6 +49,6 @@ class ReviewControllerTest {
                 .content("{\"name\":\"\",\"score\":,\"description\":\".\"}"))
                 .andExpect(status().isBadRequest());
 
-        verify(reviewService,times(0)).addReview(any(),any());
+        verify(reviewService, times(0)).addReview(any(), any(), any(), any());
     }
 }

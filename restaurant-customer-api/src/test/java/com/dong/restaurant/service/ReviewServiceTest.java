@@ -45,9 +45,8 @@ class ReviewServiceTest {
                 .build();
 
         given(restaurantRepository.findById(2L)).willReturn(Optional.ofNullable(restaurant));
-        Review review=Review.builder().name("dong").score(2).description("굿").build();
 
-        reviewService.addReview(2L,review);
+        reviewService.addReview(2L,"테스트집","굿",2);
 
         verify(reviewRepository).save(any());
     }

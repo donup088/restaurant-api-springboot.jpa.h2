@@ -18,7 +18,6 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
     @Column(name = "review_name")
     private String name;
 

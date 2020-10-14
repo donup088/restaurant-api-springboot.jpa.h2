@@ -14,13 +14,19 @@ public class ReviewService {
     private RestaurantRepository restaurantRepository;
 
     @Autowired
-    public ReviewService(ReviewRepository reviewRepository,RestaurantRepository restaurantRepository) {
+    public ReviewService(ReviewRepository reviewRepository, RestaurantRepository restaurantRepository) {
         this.reviewRepository = reviewRepository;
-        this.restaurantRepository=restaurantRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
-    public Review addReview(Long restaurantId, Review review) {
+    public Review addReview(Long restaurantId, String name, String description, Integer score) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId).get();
+        Review review=Review.builder()
+                .name(name)
+                .description(description)
+                .score(score)
+                .build();
+
         review.setRestaurant(restaurant);
 
         return reviewRepository.save(review);
