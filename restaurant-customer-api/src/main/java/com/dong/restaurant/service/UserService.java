@@ -2,6 +2,8 @@ package com.dong.restaurant.service;
 
 import com.dong.restaurant.domain.User;
 import com.dong.restaurant.exception.EmailExistedException;
+import com.dong.restaurant.exception.EmailNotExistedException;
+import com.dong.restaurant.exception.PasswordWrongException;
 import com.dong.restaurant.repsoitory.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,9 +19,12 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User registerUser(String email, String name, String password) {
@@ -27,7 +32,7 @@ public class UserService {
         if (findUser.isPresent()) {
             throw new EmailExistedException(email);
         }
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         String encodedPassword = passwordEncoder.encode(password);
 
         User user = User.builder()
@@ -38,5 +43,15 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public User authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailNotExistedException(email));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new PasswordWrongException();
+        }
+        return user;
     }
 }
