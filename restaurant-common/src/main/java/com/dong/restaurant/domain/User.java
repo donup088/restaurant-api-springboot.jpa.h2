@@ -1,9 +1,6 @@
 package com.dong.restaurant.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,6 +32,8 @@ public class User {
     @NotEmpty
     private String password;
 
+    private Long restaurantId;
+
     public Boolean isAdmin() {
         return level >= 100;
     }
@@ -47,6 +46,15 @@ public class User {
 
     public boolean isActive() {
         return level > 0;
+    }
+
+    public void setRestaurantId(Long restaurantId) {
+        this.level = 50;
+        this.restaurantId = restaurantId;
+    }
+
+    public boolean isRestaurantOwner() {
+        return level == 50;
     }
 
     public void deactivate() {

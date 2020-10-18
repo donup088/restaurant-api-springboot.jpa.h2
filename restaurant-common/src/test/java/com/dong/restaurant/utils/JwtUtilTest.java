@@ -17,7 +17,7 @@ class JwtUtilTest {
 
     @Test
     public void createToken() {
-        String token = jwtUtil.createToken(1L, "dong");
+        String token = jwtUtil.createToken(1L, "dong", null);
 
         assertEquals(token, "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJkb25nIn0.nFJeevg5yaVow0gINVZY-CJ7Zw6PHNhUqXHMzWsFX6c");
     }

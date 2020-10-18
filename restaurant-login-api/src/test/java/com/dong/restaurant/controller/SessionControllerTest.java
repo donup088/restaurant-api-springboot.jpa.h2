@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,17 +34,18 @@ class SessionControllerTest {
 
     @Test
     public void create() throws Exception {
-        Long id=1L;
-        String name="dong";
-        String email="test@test.com";
+        Long id = 1L;
+        String name = "dong";
+        String email = "test@test.com";
         User mockUser = User.builder()
                 .id(id)
                 .email(email)
                 .name(name)
                 .password("ACCESSTOKEN")
+                .level(50)
                 .build();
         given(userService.authenticate("test@test.com", "test")).willReturn(mockUser);
-        given(jwtUtil.createToken(id,name)).willReturn("header.payload.signature");
+        given(jwtUtil.createToken(id, name, null)).willReturn("header.payload.signature");
 
         mvc.perform(post("/session")
                 .contentType(MediaType.APPLICATION_JSON)
