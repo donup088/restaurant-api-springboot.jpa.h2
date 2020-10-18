@@ -4,4 +4,5 @@ include 'restaurant-admin-api'
 include 'restaurant-common'
 include 'restaurant-customer-api'
 include 'restaurant-login-api'
+include 'restaurant-api'
 
